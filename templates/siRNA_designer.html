@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>fungi siRNA designer</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='sirna.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='normal.css') }}">
+        <script src="{{ url_for('static', filename='main.js') }}"></script>
+        <script>
+            // 这里是JavaScript代码
+        </script>
+    </head>
+    <body>
+        <!-- 页眉-->
+        <div id="menu">
+            <div id="bloc-menu">
+    {#                在Flask中，路由是通过装饰器@app.route()来设置的，而不是通过HTML文件的名称。所以，当你尝试访问/siRNA_designer.html或/guidelines.html时，服务器找不到对应的路由，就会返回404错误。#}
+                <li class=""><a href="/"  class="menu" >Find siRNA sequences</a></li>
+{#                <li class=""><a href="/guidelines" class="menu" >siRNA design guidelines</a></li>#}
+            </div>
+        </div>
+
+        <!-- 这里中间内容 -->
+        <div id="sirna-content">
+            <h1>Find siRNA sequences - Advanced search</h1>
+            <h3>Instructions</h3>
+            <div class=block>
+            <p>
+                1.&nbsp;&nbsp;Enter your siRNA name for reference (optional)<br />
+                2.&nbsp;&nbsp;Paste the sequence of your target gene. (Spaces and numbers will be ignored)<br />
+                3.&nbsp;&nbsp;Enter the desired selection criteria (or use the default settings).<br />
+                4.&nbsp;&nbsp;If you want to improve the specificity of siRNA, please upload the database corresponding to the target gene. (optional)<br />
+
+            </p>
+            </div>
+            <form action="/" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="advanced" value="1">
+                <label>siRNA Name:</label>
+                <input type="text" name="nom" size="50" maxlength="100"style="width:100%"  value="">
+                <br />
+                <label>Sequence (max: 9600bp):</label>
+                <textarea name="sequence" cols="100" rows="8" style="width:100%" ></textarea>
+                <br />
+
+                <div style="float:left; width:40%; padding-left:2%">
+                    <label>Motif size:</label>
+                    <input type="text" size="5" maxlength="3" name="taille_motif" value="22"> nt
+                    <br /><br />
+
+                    <label>Restrict the search to the region from position:</label>
+                    <input type="text" name="posion_start" size="5" maxlength="10">
+                    to <input type="text" name="posion_end" size="5" maxlength="10">
+                    <br /> <br />
+
+                    <label>siRNA target sequence GC% between:</label>
+                    <input type=text name="GCmin" size="3" maxlength="3" value="35">
+                    and
+                    <input type=text name="GCmax" size="3" maxlength="3" value="52">
+                </div>
+                <div style="float:right; width:40%; padding-left:2%">
+                    <P>
+                        <label>First nucleotide of the target sequence:</label>
+                        <div class="styled-select grey">
+                        <select name="first">
+                            <option value='' selected></option>
+                            <option value='A or G'>A or G</option>
+                            <option value=A>A</option>
+                            <option value=G>G</option>
+                        </select>
+                        </div>
+                    <br /><br />
+                    </P>
+                    <p>
+                        <label>Avoid contiguous G's or C's
+                        <select name="consGC">
+                            <option value='' selected></option>
+                            <option value='4'>4</option>
+                            <option value='5'>5</option>
+                            <option value='6'>6</option>
+                            <option value='7'>7</option>
+                        </select>
+                        nt or more</label>
+
+                        <label>Avoid contiguous &nbsp;A's or T's
+                        <select name="consAT">
+                            <option value='' selected></option>
+                            <option value='4'>4</option>
+                            <option value='5'>5</option>
+                            <option value='6'>6</option>
+                            <option value='7'>7</option>
+                        </select>
+                        nt or more</label>
+
+                        <label>Avoid contiguous G's or T's
+                        <select name="consGT">
+                            <option value='' selected></option>
+                            <option value='4'>4</option>
+                            <option value='5'>5</option>
+                            <option value='6'>6</option>
+                            <option value='7'>7</option>
+                        </select>
+                        nt or more</label>
+
+                        <label>Avoid contiguous T's
+                        <select name="consT">
+                            <option value='' selected></option>
+                            <option value='4'>4</option>
+                            <option value='5'>5</option>
+                            <option value='6'>6</option>
+                            <option value='7'>7</option>
+                        </select>
+                        nt or more</label>
+                        <br />
+                    </p>
+
+                    <p>
+                    <label>Database:</label>
+                        <input type="file" name="file">
+                    </p>
+
+
+                </div>
+                <div style="clear:both; width:100%; text-align:center; padding-top:20px;">
+                     <input type=submit name=Submit value=Search> <input type=reset name=Submit2 value=Reset>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>

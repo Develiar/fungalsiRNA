@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Result</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='sirna.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='normal.css') }}">
+        <script src="{{ url_for('static', filename='main.js') }}"></script>
+        <script>
+            {#// 这里是JavaScript代码#}
+            {#function toggleDiv() {#}
+            {#    var div = document.getElementById("display");#}
+            {#    if (div.style.display === "none") {#}
+            {#        div.style.display = "block"; // 如果 div 当前是隐藏状态，则显示#}
+            {#    } else {#}
+            {#        div.style.display = "none"; // 如果 div 当前是显示状态，则隐藏#}
+            {#    }#}
+            function toggleShowColumn() {
+                // 获取所有的 'show-column' 类元素
+                var showColumns = document.querySelectorAll('.show-column');
+
+                // 遍历每个元素，切换其显示状态
+                showColumns.forEach(function(column) {
+                    if (column.style.display === 'none') {
+                        column.style.display = ''; // 如果是隐藏的，则显示
+                    } else {
+                        column.style.display = 'none'; // 如果是显示的，则隐藏
+                    }
+                });
+            }
+        </script>
+    </head>
+
+    <body>
+    <!-- 页眉-->
+        <div id="menu">
+            <div id="bloc-menu">
+    {#                在Flask中，路由是通过装饰器@app.route()来设置的，而不是通过HTML文件的名称。所以，当你尝试访问/siRNA_designer.html或/guidelines.html时，服务器找不到对应的路由，就会返回404错误。#}
+                <li class=""><a href="/"  class="menu" >Find siRNA sequences</a></li>
+{#                <li class=""><a href="/guidelines" class="menu" >siRNA design guidelines</a></li>#}
+            </div>
+        </div>
+        <!-- 这里中间内容 -->
+        <div id="sirna-content">
+            {% if message_error %}
+                <br>
+                <br>
+                <center>
+                    <h3>{{ message_error }}</h3>
+                </center>
+            {% else %}
+                <h1>{{ nom }}</h1>
+                <p>
+                    Sequence size:
+                    <strong>{{ sequence_length }} bp</strong>
+                    <br>
+                    <br>
+                </p>
+                <h3> options</h3>
+                <p>
+                    siRNA sequence GC% between
+                    <b> {{ GCmin }} and {{ GCmax }}.</b>
+                    <br />
+                    First nucleotide of the target sequence is<b>{{ first }}.</b><br />
+                </p>
+
+                {% if db_info == 1 %}
+                    <p>BLAST:<b>strand=plus/minus</b>.</p>
+                {% else %}
+                    <p>No BLAST done against .</p>
+                {% endif %}
+
+                {% if 17 < taille_motif < 30 %}
+                    <br>
+                    <h3>Score rule of length 18-29</h3>
+                    <p>No.1&nbsp;&nbsp;The GC content in the second to seventh nucleotides in antisense strand is 33% to 67%, and the GC content in the eighth to eighteenth nucleotides in antisense strand should be 33% to 55%.------1s</p>
+                    <p>No.2&nbsp;&nbsp;GC repeats no more than 1 time, and AT repeats no more than 2 times.------1s</p>
+                    <p>No.3&nbsp;&nbsp;The maximum number of consecutive repeats of base A, base T, base G and base C shall not exceed 3, 3 or 2 respectively.------1s</p>
+                    <p>No.4&nbsp;&nbsp;TT overhangs in 3’-end------1s</p>
+                    <p>No.5&nbsp;&nbsp;The 3'-terminal base of antisense strand of 26nt is A or T.------1s</p>
+                    <p>No.6&nbsp;&nbsp;The base at the 19th position of 29nt is A or T.------1s</p>
+                    <p>No.7&nbsp;&nbsp;Loose degree of secondary structure------2s</p>
+
+                {% elif 29 < taille_motif < 41 %}
+                    <br>
+                    <h3>Score rule of length 30-40</h3>
+                    <p>No.1&nbsp;&nbsp;The GC content in the second to seventh nucleotides in antisense strand is 33% to 67%, and the GC content in the eighth to eighteenth nucleotides in antisense strand should be 33% to 55%.------1s</p>
+                    <p>No.2&nbsp;&nbsp;GC repeats no more than 1 time, and AT repeats no more than 2 times.------1s</p>
+                    <p>No.3&nbsp;&nbsp;The maximum number of consecutive repeats of base A, base T, base G and base C shall not exceed 3, 3 or 2 respectively.------1s</p>
+                    <p>No.4&nbsp;&nbsp;TT overhangs in 3’-end------1s</p>
+                    <p>No.5&nbsp;&nbsp;The 3'-terminal base of antisense strand of 33nt is T.------1s</p>
+                    <p>No.6&nbsp;&nbsp;The 21st base position of antisense strand is A.------1s</p>
+                    <p>No.7&nbsp;&nbsp;The 25st base position of antisense strand is T or C.------1s</p>
+                    <p>No.8&nbsp;&nbsp;The 30st base position of antisense strand is T or G.------1s</p>
+                    <p>No.9&nbsp;&nbsp;The 33st base position of antisense strand is T.------1s</p>
+                    <p>No.10&nbsp;&nbsp;The 10th base position of antisense strand of 32nt is G.------1s</p>
+                    <p>No.11&nbsp;&nbsp;Loose degree of secondary structure------2s</p>
+
+                {% endif %}
+
+                {% if db_info == 1 %}
+                    <div id="base" class="apparent"><br>
+                    <h3>{{off_candidate}} siRNA candidate target sequences of {{taille_motif}} nt found</h3>
+                    <table>
+                        <thead>
+                              <tr>
+                                  <th>Best sequences in blue </th>
+                              </tr>
+                          </thead>
+                      <tbody>
+                        <tr>
+                            {%- for column in table_columns %}
+                                {% if column == 'show' %}
+                                <td style="font-size: 14px; font-weight: bold;">
+                                    <!-- 点击按钮切换显示和隐藏 -->
+                                    <button onclick="toggleShowColumn()">show</button>
+                                </td>
+                                {% else %}
+                                    <td style="font-size: 14px; font-weight: bold;">
+                                        {{ column |safe }}
+                                    </td>
+                                {% endif %}
+                            {%- endfor %}
+                        </tr>
+                          {% for row in seq_off_table %}
+                            <tr>
+                                {%- for column in table_columns %}
+                                    {%- if column == 'target sequence <br> secondary structure' %}
+                                        {% set eight_second = row[column][-8:] %}
+                                        {% set count_dian = eight_second.count('.') %}
+                                        {# 检查全部点数有多少,如果后面八位是.就变蓝 #}
+                                        {%- if count_dian == 8 %}
+                                            {# 如果满足条件，将颜色设置为 'blue' #}
+                                            <td style="color: #0800ff;">{{ row[column] | safe }}</td>
+                                        {%- else %}
+                                            <td>{{ row[column] | safe }}</td>
+                                        {%- endif %}
+                                    {% elif column == 'show' %}
+                                        <td class="show-column" style="white-space: pre; text-align: left; display: none">{{ row[column]| safe }}</td>
+                                    {%- else %}
+                                        <td>{{ row[column] | safe }}</td>
+                                    {%- endif %}
+                                {%- endfor %}
+                            </tr>
+                          {% endfor %}
+
+                      </tbody>
+                    </table>
+                    </div>
+
+                {% else %}
+                    <div id="base" class="apparent"><br>
+                    <h3>{{candidate}} siRNA candidate target sequences of {{taille_motif}} nt found</h3>
+                    <table>
+                      <thead>
+                          <tr>
+                              <th>Best sequences in blue </th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                            {%- for column in table_columns %}
+                            <td>{{ column |safe }}</td>
+                            {%- endfor %}
+                        </tr>
+                        {%- for row in seq_table %}
+                        <tr>
+                            {%- for column in table_columns %}
+                                {%- if column == 'target sequence <br> secondary structure' %}
+
+                                    {% set eight_second = row[column][-8:] %}
+                                    {% set count_dian = eight_second.count('.') %}
+                                    {# 检查全部点数有多少,如果后面八位是.就变蓝 #}
+                                    {%- if count_dian == 8 %}
+                                        {# 如果满足条件，将颜色设置为 'blue' #}
+                                        <td style="color: #0800ff;">{{ row[column] }}</td>
+                                    {%- else %}
+                                        <td>{{ row[column] }}</td>
+                                    {%- endif %}
+
+                                {%- else %}
+                                    <td>{{ row[column] }}</td>
+                                {%- endif %}
+                            {%- endfor %}
+                        </tr>
+                        {%- endfor %}
+                      </tbody>
+                    </table>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+
+    </body>
+</html>
